@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 
+import 'dart:async';
+
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
+import 'package:spotify_sdk/models/connection_status.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
+
+import 'now_playing.dart';
+import '../common/set_status.dart';
+
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.title}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -12,75 +23,111 @@ class HomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _counter = 0;
+  bool _loading = false;
+  bool _connected = false;
+  final Logger _logger = Logger(
+    //filter: CustomLogFilter(), // custom logfilter can be used to have logs in release mode
+    printer: PrettyPrinter(
+      methodCount: 2, // number of method calls to be displayed
+      errorMethodCount: 8, // number of method calls if stacktrace is provided
+      lineLength: 120, // width of the output
+      colors: true, // Colorful log messages
+      printEmojis: true, // Print an emoji for each log message
+      printTime: true,
+    ),
+  );
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  String buttonTitle = 'Connect to your Spotify account';
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('SpotifySdk Example'),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        body: _homeScreen(context),
+       ),
     );
+  }
+
+  Widget _homeScreen(BuildContext context) {
+    return StreamBuilder<ConnectionStatus>(
+      stream: SpotifySdk.subscribeConnectionStatus(),
+      builder: (context, snapshot) {
+        _connected = false;
+          var data = snapshot.data;
+          if (data != null) {
+            _connected = data.connected;
+        }
+
+        if (_connected) {
+          return const NowPlaying();
+        }
+
+        return Center(
+          child: ElevatedButton(
+            onPressed: () => connectToSpotifyRemote(), 
+            child: Text(
+              buttonTitle,
+            ),
+          )
+        );
+      }
+    );
+  }
+
+
+  Future<void> connectToSpotifyRemote() async {
+    try {
+      setState(() {
+        _loading = true;
+      });
+      var result = await SpotifySdk.connectToSpotifyRemote(
+          clientId: dotenv.env['CLIENT_ID'].toString(),
+          redirectUrl: dotenv.env['REDIRECT_URL'].toString());
+      setStatus(result
+          ? 'connect to spotify successful'
+          : 'connect to spotify failed', _logger);
+      setState(() {
+        _loading = false;
+      });
+    } on PlatformException catch (e) {
+      setState(() {
+        _loading = false;
+      });
+      setStatus(e.code, _logger, message: e.message);
+    } on MissingPluginException {
+      setState(() {
+        _loading = false;
+      });
+      setStatus('not implemented', _logger);
+    }
+  }
+
+
+  Future<String> getAccessToken() async {
+    try {
+      var authenticationToken = await SpotifySdk.getAccessToken(
+          clientId: dotenv.env['CLIENT_ID'].toString(),
+          redirectUrl: dotenv.env['REDIRECT_URL'].toString(),
+          scope: 'app-remote-control, '
+              'user-modify-playback-state, '
+              'playlist-read-private, '
+              'playlist-modify-public,user-read-currently-playing');
+      setStatus('Got a token: $authenticationToken', _logger);
+      return authenticationToken;
+    } on PlatformException catch (e) {
+      setStatus(e.code, message: e.message, _logger);
+      return Future.error('$e.code: $e.message');
+    } on MissingPluginException {
+      setStatus('not implemented', _logger);
+      return Future.error('not implemented');
+    }
   }
 }
