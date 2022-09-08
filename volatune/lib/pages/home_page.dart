@@ -50,6 +50,9 @@ class _HomePageState extends State<HomePage> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('SpotifySdk Example'),
+          actions: [
+            _connected ? IconButton(onPressed: disconnect, icon: const Icon(Icons.logout)) : Container(),
+          ],
         ),
         body: _homeScreen(context),
        ),
@@ -96,6 +99,7 @@ class _HomePageState extends State<HomePage> {
           : 'connect to spotify failed', _logger);
       setState(() {
         _loading = false;
+        _connected = result;
       });
     } on PlatformException catch (e) {
       setState(() {
@@ -110,24 +114,27 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
-  Future<String> getAccessToken() async {
+  Future<void> disconnect() async {
     try {
-      var authenticationToken = await SpotifySdk.getAccessToken(
-          clientId: dotenv.env['CLIENT_ID'].toString(),
-          redirectUrl: dotenv.env['REDIRECT_URL'].toString(),
-          scope: 'app-remote-control, '
-              'user-modify-playback-state, '
-              'playlist-read-private, '
-              'playlist-modify-public,user-read-currently-playing');
-      setStatus('Got a token: $authenticationToken', _logger);
-      return authenticationToken;
+      setState(() {
+        _loading = true;
+      });
+      var result = await SpotifySdk.disconnect();
+      setStatus(result ? 'disconnect successful' : 'disconnect failed', _logger);
+      setState(() {
+        _loading = false;
+        _connected = !result;
+      });
     } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message, _logger);
-      return Future.error('$e.code: $e.message');
+      setState(() {
+        _loading = false;
+      });
+      setStatus(e.code, _logger, message: e.message);
     } on MissingPluginException {
+      setState(() {
+        _loading = false;
+      });
       setStatus('not implemented', _logger);
-      return Future.error('not implemented');
     }
   }
 }

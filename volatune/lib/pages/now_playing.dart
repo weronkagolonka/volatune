@@ -20,7 +20,7 @@ class NowPlaying extends StatefulWidget {
 class _NowPlayingState extends State<NowPlaying> {
 
   late ImageUri? currentTrackImageUri;
-
+  bool _loading = false;
   final Logger _logger = Logger(
   //filter: CustomLogFilter(), // custom logfilter can be used to have logs in release mode
   printer: PrettyPrinter(
@@ -33,18 +33,12 @@ class _NowPlayingState extends State<NowPlaying> {
   ),
   );
 
-
   @override
   Widget build(BuildContext context) {
     return (
       StreamBuilder<PlayerState>(
         stream: SpotifySdk.subscribePlayerState(),
         builder: (BuildContext context, AsyncSnapshot<PlayerState> snapshot) {
-
-          if (snapshot.data != null) {
-            print('SNAPSHOT');
-            print(snapshot.data);
-          }
 
           var track = snapshot.data?.track;
           currentTrackImageUri = track?.imageUri;
@@ -53,6 +47,10 @@ class _NowPlayingState extends State<NowPlaying> {
           var songTitle = track?.name;
           var songArtist = track?.artist.name;
           var songAlbum = track?.album.name;
+
+          if (snapshot.hasData) {
+            printCurrentSong(snapshot.data);
+          }
           
           var isPlayingPaused = playerState?.isPaused;
 
@@ -64,36 +62,35 @@ class _NowPlayingState extends State<NowPlaying> {
           }
 
           return Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Container(
-                  child: spotifyImageWidget(track.imageUri),
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Container(
+                    child: spotifyImageWidget(track.imageUri),
+                  ),
                 ),
-              ),
-              //spotifyImageWidget(track.imageUri),
-              Expanded(
-                flex: 3,
-                child: Padding(
-                  padding: EdgeInsets.all(Spacing.regular.value),
-                  child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      songArtist!,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      songTitle!,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      songAlbum!,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: EdgeInsets.all(Spacing.regular.value),
+                    child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        songArtist!,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        songTitle!,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        songAlbum!,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -101,6 +98,10 @@ class _NowPlayingState extends State<NowPlaying> {
         }
       )
     );
+  }
+
+  Future<void> printCurrentSong(data) async {
+    print(data?.track?.name);
   }
 
   Widget spotifyImageWidget(ImageUri image) {
@@ -128,5 +129,4 @@ class _NowPlayingState extends State<NowPlaying> {
           }
       });
   }
-
 }
