@@ -1,0 +1,13 @@
+[versions]
+kafka = "4.0.0"
+kotlin = "2.1.21"
+test-containers = "1.21.2"
+
+[libraries]
+kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka"}
+testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "test-containers" }
+testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "test-containers" }
+testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "test-containers" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
