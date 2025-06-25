@@ -1,6 +1,6 @@
 # volatune
 
-This is a new Flutter project featuring an app for sharing the music stream with others.
+This is a new Kotlin project featuring an app for sharing the music stream with others.
 
 ## Goals
 
