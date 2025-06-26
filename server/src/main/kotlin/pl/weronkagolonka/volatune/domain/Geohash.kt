@@ -4,7 +4,7 @@ import ch.hsr.geohash.GeoHash
 
 typealias Geohash = String
 
-fun String.Companion.geohashFromLocation(
+fun String.Companion.geohashFromLatLng(
     latitude: Double,
     longitude: Double,
     precision: Int = 12, // get full geohash
