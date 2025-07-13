@@ -10,6 +10,9 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url = uri("https://packages.confluent.io/maven/")
+        }
     }
 
     tasks.withType<Test>().configureEach {
