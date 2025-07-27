@@ -1,13 +1,40 @@
 [versions]
+avro-serializer = "8.0.0"
 kafka = "4.0.0"
 kotlin = "2.1.21"
 test-containers = "1.21.2"
+geohash = "1.4.0"
+kotlinx-serialization = "1.8.1"
+avro4k = "2.3.0"
+kotest = "5.9.1"
+kotlin-coroutines = "1.10.2"
+
 
 [libraries]
+avro4k = { module = "com.github.avro-kotlin.avro4k:avro4k-core", version.ref = "avro4k" }
+avro-serializer = { module = "io.confluent:kafka-avro-serializer", version.ref = "avro-serializer" }
+geohash = { module = "ch.hsr:geohash", version.ref = "geohash" }
 kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka"}
+kotest-junit = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "test-containers" }
 testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "test-containers" }
 testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "test-containers" }
 
+[bundles]
+testcontainers = [
+    "testcontainers-core",
+    "testcontainers-junit",
+    "testcontainers-kafka"
+]
+
+kotest = [
+    "kotest-junit",
+    "kotest-assertions"
+]
+
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
