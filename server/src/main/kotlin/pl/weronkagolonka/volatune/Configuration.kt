@@ -8,6 +8,7 @@ data class KafkaConfiguration(
     val bootstrapServers: List<String>,
     val schema: SchemaConfiguration,
     val topic: String,
+    val consumerGroup: String,
 )
 
 data class SchemaConfiguration(
