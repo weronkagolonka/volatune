@@ -11,7 +11,7 @@ class GeohashTest :
             val longitude = 11.0
 
             val actualGeohash =
-                Geohash.geohashFromLatLng(
+                Geohash.fromLatLng(
                     latitude = latitude,
                     longitude = longitude,
                 )
