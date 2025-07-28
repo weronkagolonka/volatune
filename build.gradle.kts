@@ -5,7 +5,7 @@ plugins {
 }
 
 allprojects {
-    group = "pl.weronkagolonka.volatune"
+    group = "pl.weronka.golonka.volatune"
     version = "1.0.0"
 
     repositories {
