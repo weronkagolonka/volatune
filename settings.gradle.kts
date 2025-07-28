@@ -1,3 +1,4 @@
 rootProject.name = "volatune"
 
-include("server")
+include("common")
+include("kafka")
