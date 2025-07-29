@@ -1,15 +1,17 @@
 package pl.weronka.golonka.volatune
 
-data class Configuration(
-    val kafka: KafkaConfiguration,
-)
+import pl.weronka.golonka.volatune.common.domain.config.loadConfiguration
 
 data class KafkaConfiguration(
     val bootstrapServers: List<String>,
     val schema: SchemaConfiguration,
     val topic: String,
     val consumerGroup: String,
-)
+) {
+    companion object {
+        fun load(): KafkaConfiguration = loadConfiguration()
+    }
+}
 
 data class SchemaConfiguration(
     val url: String,

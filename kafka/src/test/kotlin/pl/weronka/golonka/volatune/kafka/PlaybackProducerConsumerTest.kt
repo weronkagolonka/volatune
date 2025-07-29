@@ -9,7 +9,6 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainOnly
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import pl.weronka.golonka.volatune.Configuration
 import pl.weronka.golonka.volatune.KafkaConfiguration
 import pl.weronka.golonka.volatune.SchemaConfiguration
 import pl.weronka.golonka.volatune.common.domain.Playback
@@ -30,22 +29,19 @@ class PlaybackProducerConsumerTest :
         )
 
         val config =
-            Configuration(
-                kafka =
-                    KafkaConfiguration(
-                        bootstrapServers = listOf(TestContainers.kafka.bootstrapServers),
-                        schema =
-                            SchemaConfiguration(
-                                url = "http://${TestContainers.schemaRegistry.host}:${TestContainers.schemaRegistry.firstMappedPort}",
-                            ),
-                        topic = kafkaTopic,
-                        consumerGroup = "test",
+            KafkaConfiguration(
+                bootstrapServers = listOf(TestContainers.kafka.bootstrapServers),
+                schema =
+                    SchemaConfiguration(
+                        url = "http://${TestContainers.schemaRegistry.host}:${TestContainers.schemaRegistry.firstMappedPort}",
                     ),
+                topic = kafkaTopic,
+                consumerGroup = "test",
             )
         val avro = Avro
 
-        val producer = PlaybackProducer(config.kafka, avro)
-        val consumer = PlaybackConsumer(config.kafka, kafkaTopic)
+        val producer = PlaybackProducer(config, avro)
+        val consumer = PlaybackConsumer(config, kafkaTopic)
 
         val playback = Playback.getTestInstance()
 
