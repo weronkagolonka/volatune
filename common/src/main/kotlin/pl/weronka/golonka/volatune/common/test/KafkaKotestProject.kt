@@ -1,3 +1,5 @@
+package pl.weronka.golonka.volatune.common.test
+
 import io.kotest.core.config.AbstractProjectConfig
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
@@ -38,7 +40,7 @@ object TestContainers {
     }
 }
 
-object KafkaKotestProject : AbstractProjectConfig() {
+open class KafkaKotestProject : AbstractProjectConfig() {
     override suspend fun beforeProject() {
         TestContainers.kafka
         println("Kafka started")

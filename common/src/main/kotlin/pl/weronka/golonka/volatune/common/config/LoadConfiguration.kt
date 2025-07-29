@@ -1,4 +1,4 @@
-package pl.weronka.golonka.volatune.common.domain.config
+package pl.weronka.golonka.volatune.common.config
 
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.ExperimentalHoplite

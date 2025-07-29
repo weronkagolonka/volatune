@@ -13,5 +13,8 @@ dependencies {
 
     implementation(libs.bundles.hoplite)
 
+    implementation(libs.bundles.testcontainers)
+    implementation(libs.bundles.kotest)
+
     testImplementation(libs.bundles.kotest)
 }
