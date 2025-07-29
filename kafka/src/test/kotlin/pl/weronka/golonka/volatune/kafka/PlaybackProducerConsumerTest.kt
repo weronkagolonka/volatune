@@ -41,7 +41,7 @@ class PlaybackProducerConsumerTest :
         val avro = Avro
 
         val producer = PlaybackProducer(config, avro)
-        val consumer = PlaybackConsumer(config, kafkaTopic)
+        val consumer = PlaybackConsumer(config)
 
         val playback = Playback.getTestInstance()
 

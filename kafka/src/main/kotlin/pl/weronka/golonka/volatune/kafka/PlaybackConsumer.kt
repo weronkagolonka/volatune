@@ -13,8 +13,7 @@ import pl.weronka.golonka.volatune.common.domain.PlaybackKafkaSerializer
 import java.time.Duration
 
 class PlaybackConsumer(
-    config: KafkaConfiguration,
-    private val topic: String,
+    val config: KafkaConfiguration,
 ) {
     private val consumer =
         KafkaConsumer<String, Playback>(
@@ -45,7 +44,7 @@ class PlaybackConsumer(
              *
              */
 
-            consumer.subscribe(listOf(topic))
+            consumer.subscribe(listOf(config.topic))
             try {
                 while (isActive) {
                     consumer.poll(Duration.ofMillis(5000)).forEach {
