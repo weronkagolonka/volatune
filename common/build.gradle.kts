@@ -11,5 +11,7 @@ dependencies {
 
     implementation(libs.kafka.clients)
 
+    implementation(libs.bundles.hoplite)
+
     testImplementation(libs.bundles.kotest)
 }
