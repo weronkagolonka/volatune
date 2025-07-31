@@ -2,6 +2,7 @@ package pl.weronka.golonka.volatune.kafka
 
 import com.github.avrokotlin.avro4k.Avro
 import com.github.avrokotlin.avro4k.schema
+import com.uber.h3core.H3Core
 import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainOnly
@@ -19,6 +20,7 @@ class PlaybackProducerConsumerTest :
     DescribeSpec({
         val kafkaTopic = "volatune-playbacks"
         val schema = Avro.schema<Playback>()
+        val h3 = H3Core.newInstance()
 
         listeners(
             KafkaCleanerListener(TestContainers.kafka.bootstrapServers),
@@ -39,9 +41,8 @@ class PlaybackProducerConsumerTest :
                 topic = kafkaTopic,
                 consumerGroup = "test",
             )
-        val avro = Avro
 
-        val producer = PlaybackProducer(config, avro)
+        val producer = PlaybackProducer(config, h3)
         val consumer = PlaybackConsumer(config)
 
         val playback = Playback.getTestInstance()
