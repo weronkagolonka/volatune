@@ -8,6 +8,7 @@ import pl.weronka.golonka.volatune.common.domain.Geohash
 import pl.weronkagolonka.volatune.domain.Song
 import pl.weronkagolonka.volatune.domain.User
 import java.time.Instant
+import java.util.UUID
 
 @Serializable
 data class Playback(
@@ -21,13 +22,13 @@ data class Playback(
             Playback(
                 user =
                     User(
-                        id = "1",
+                        id = UUID.randomUUID().toString(),
                         name = "test",
                         profileImageUrl = "test.jpg",
                     ),
                 song =
                     Song(
-                        id = "1",
+                        id = UUID.randomUUID().toString(),
                         title = "test",
                         artists = listOf("test"),
                         album = "test",
