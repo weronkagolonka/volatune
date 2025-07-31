@@ -3,7 +3,11 @@ package pl.weronka.golonka.volatune.common.domain
 import com.uber.h3core.H3Core
 import kotlinx.serialization.Serializable
 import java.lang.Math.toRadians
-import kotlin.math.*
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 @Serializable
 data class Location(
@@ -13,25 +17,8 @@ data class Location(
     fun h3Index(h3: H3Core) = h3.latLngToCell(latitude, longitude, 8)
 }
 
-fun Pair<Location, Location>.areWithinProximity(proximityInMeters: Double = 500.0): Boolean {
+fun Pair<Location, Location>.isWithinProximity(proximityInMeters: Double = 500.0): Boolean {
     val (location, otherLocation) = this
-
-//    val R = 6_371_000.0 // Earth radius in meters
-//
-//    // distance between latitudes and longitudes
-//    val dLat = toRadians(otherLocation.latitude - location.longitude)
-//    val dLon = toRadians(otherLocation.longitude - location.longitude)
-//
-//    // convert to radians
-//    val lat1 = toRadians(location.latitude)
-//    val lat2 = toRadians(otherLocation.latitude)
-//
-//    // apply formulae
-//    val a =
-//        sin(dLat / 2).pow(2.0) +
-//            sin(dLon / 2).pow(2.0) * cos(lat1) * cos(lat2)
-//    val c = 2 * asin(sqrt(a))
-//    return R * c
 
     val r = 6_371_000.0 // Earth radius in meters
     val latRad1 = toRadians(location.latitude)
