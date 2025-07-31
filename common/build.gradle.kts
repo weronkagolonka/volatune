@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.geohash)
 
     implementation(libs.avro4k)
     implementation(libs.kotlinx.serialization)
@@ -15,6 +14,8 @@ dependencies {
 
     implementation(libs.bundles.testcontainers)
     implementation(libs.bundles.kotest)
+
+    implementation(libs.h3)
 
     testImplementation(libs.bundles.kotest)
 }
