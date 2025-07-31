@@ -8,6 +8,7 @@ import kotlin.time.Duration.Companion.seconds
 data class Configuration(
     val kafka: KafkaConfiguration,
     val socket: SocketConfiguration,
+    val proximity: Double,
 ) {
     companion object {
         fun load(): Configuration =

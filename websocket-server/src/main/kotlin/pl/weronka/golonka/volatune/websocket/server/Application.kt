@@ -11,6 +11,8 @@ import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.sendSerialized
 import io.ktor.server.websocket.webSocket
 import kotlinx.serialization.json.Json
+import pl.weronka.golonka.volatune.common.domain.Location
+import pl.weronka.golonka.volatune.common.domain.isWithinProximity
 import pl.weronka.golonka.volatune.kafka.PlaybackConsumer
 
 // TODO setup KTOR config with port number, etc.
@@ -55,10 +57,22 @@ fun Application.playbackEndpoint() {
     routing {
         webSocket("/playback") {
             val consumer: PlaybackConsumer by dependencies
+            val config: Configuration by dependencies
 
-            // TODO filter by proximity
+            val latitude = latitudeQueryParam() ?: return@webSocket
+            val longitude = longitudeQueryParam() ?: return@webSocket
+            val userLocation = Location(latitude, longitude)
+
+            // TODO test
+            // - missing query params
+            // - invalid query params
+            // - some records filtered out due to too big distance
             consumer.getPlaybackEvents().collect { playback ->
-                sendSerialized(playback)
+                (userLocation to playback.location).let { distance ->
+                    if (distance.isWithinProximity(config.proximity)) {
+                        sendSerialized(playback)
+                    }
+                }
             }
         }
     }
