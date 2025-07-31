@@ -4,6 +4,7 @@ import com.sksamuel.hoplite.ConfigException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import pl.weronka.golonka.volatune.common.config.loadConfiguration
 import java.time.Duration
 
 data class TestConfig(

@@ -1,7 +1,5 @@
 package pl.weronka.golonka.volatune.kafka
 
-import KafkaCleanerListener
-import SchemaRegistererListener
 import com.github.avrokotlin.avro4k.Avro
 import com.github.avrokotlin.avro4k.schema
 import io.kotest.assertions.nondeterministic.eventually
@@ -12,6 +10,9 @@ import kotlinx.coroutines.launch
 import pl.weronka.golonka.volatune.KafkaConfiguration
 import pl.weronka.golonka.volatune.SchemaConfiguration
 import pl.weronka.golonka.volatune.common.domain.Playback
+import pl.weronka.golonka.volatune.common.test.KafkaCleanerListener
+import pl.weronka.golonka.volatune.common.test.SchemaRegistererListener
+import pl.weronka.golonka.volatune.common.test.TestContainers
 import kotlin.time.Duration.Companion.seconds
 
 class PlaybackProducerConsumerTest :
