@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.config.yaml)
 
+    testImplementation(libs.h3)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.bundles.testcontainers)

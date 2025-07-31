@@ -2,6 +2,7 @@ package pl.weronka.golonka.volatune.websocket.server
 
 import com.github.avrokotlin.avro4k.Avro
 import com.github.avrokotlin.avro4k.schema
+import com.uber.h3core.H3Core
 import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainOnly
@@ -31,6 +32,7 @@ class ApplicationTest :
     DescribeSpec({
         val kafkaTopic = "volatune-playbacks"
         val schema = Avro.schema<Playback>()
+        val h3 = H3Core.newInstance()
 
         listeners(
             KafkaCleanerListener(TestContainers.kafka.bootstrapServers),
@@ -57,18 +59,22 @@ class ApplicationTest :
                     SocketConfiguration(
                         pingPeriod = 5.seconds,
                     ),
+                proximityInMeters = 300.0,
             )
 
-        val producer = PlaybackProducer(config.kafka, Avro)
+        val producer = PlaybackProducer(config.kafka, h3)
         val consumer = PlaybackConsumer(config.kafka)
 
-        it("should receive records via websocket") {
+        it("should receive all produced records via websocket") {
             val playbacks =
                 listOf(
                     Playback.getTestInstance(),
                     Playback.getTestInstance(),
                     Playback.getTestInstance(),
                 )
+
+            // same location as test records
+            val userLocation = playbacks.first().location
 
             playbacks.forEach { producer.send(it) }
 
@@ -87,7 +93,12 @@ class ApplicationTest :
                         // install(ContentNegotiation) { json() }
                     }
 
-                client.webSocket("/playback") {
+                client.webSocket("/playback", {
+                    url {
+                        parameters[QueryParams.LATITUDE] = userLocation.latitude.toString()
+                        parameters[QueryParams.LONGITUDE] = userLocation.longitude.toString()
+                    }
+                }) {
                     val collectPlaybacksJob =
                         launch {
                             for (frame in incoming) {
@@ -106,4 +117,9 @@ class ApplicationTest :
 
             receivedPlaybacks shouldContainOnly playbacks
         }
+
+        // TODO test
+        // - missing query params
+        // - invalid query params
+        // - some records filtered out due to too big distance
     })

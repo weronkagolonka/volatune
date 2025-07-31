@@ -63,13 +63,9 @@ fun Application.playbackEndpoint() {
             val longitude = longitudeQueryParam() ?: return@webSocket
             val userLocation = Location(latitude, longitude)
 
-            // TODO test
-            // - missing query params
-            // - invalid query params
-            // - some records filtered out due to too big distance
             consumer.getPlaybackEvents().collect { playback ->
                 (userLocation to playback.location).let { distance ->
-                    if (distance.isWithinProximity(config.proximity)) {
+                    if (distance.isWithinProximity(config.proximityInMeters)) {
                         sendSerialized(playback)
                     }
                 }
