@@ -6,16 +6,14 @@ kotlin = "2.1.21"
 ktor = "3.2.2"
 logback = "1.4.14"
 test-containers = "1.21.2"
-geohash = "1.4.0"
 kotlinx-serialization = "1.8.1"
 avro4k = "2.3.0"
 kotest = "5.9.1"
 kotlin-coroutines = "1.10.2"
-
+uber-h3 = "4.1.1"
 
 [libraries]
 avro4k = { module = "com.github.avro-kotlin.avro4k:avro4k-core", version.ref = "avro4k" }
-geohash = { module = "ch.hsr:geohash", version.ref = "geohash" }
 hoplite-core = { module = "com.sksamuel.hoplite:hoplite-core", version.ref = "hoplite" }
 hoplite-hocon = { module = "com.sksamuel.hoplite:hoplite-hocon", version.ref = "hoplite" }
 kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka"}
@@ -33,10 +31,10 @@ ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor"
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
-kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "test-containers" }
 testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "test-containers" }
 testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "test-containers" }
+h3 = { module = "com.uber:h3", version.ref = "uber-h3" }
 
 [bundles]
 testcontainers = [

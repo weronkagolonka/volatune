@@ -1,6 +1,6 @@
 package pl.weronka.golonka.volatune.kafka
 
-import com.github.avrokotlin.avro4k.Avro
+import com.uber.h3core.H3Core
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -15,7 +15,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class PlaybackProducer(
     private val config: KafkaConfiguration,
-    private val avroInstance: Avro,
+    private val h3: H3Core,
 ) {
     private val producer =
         KafkaProducer<String, Playback>(
@@ -34,7 +34,7 @@ class PlaybackProducer(
         val record =
             ProducerRecord(
                 config.topic,
-                playback.location,
+                playback.location.h3Index(h3).toString(),
                 playback,
             )
 

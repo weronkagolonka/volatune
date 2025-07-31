@@ -13,6 +13,8 @@ dependencies {
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.kotlinx.serialization)
 
+    implementation(libs.h3)
+
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.bundles.testcontainers)
 }
