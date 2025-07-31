@@ -14,13 +14,12 @@ data class Location(
     val latitude: Double,
     val longitude: Double,
 ) {
-    fun h3Index(h3: H3Core) = h3.latLngToCell(latitude, longitude, 8)
+    fun h3Index(h3: H3Core) = h3.latLngToCell(latitude, longitude, Constants.H3_INDEX_RESOLUTION)
 }
 
 fun Pair<Location, Location>.isWithinProximity(proximityInMeters: Double = 500.0): Boolean {
     val (location, otherLocation) = this
 
-    val r = 6_371_000.0 // Earth radius in meters
     val latRad1 = toRadians(location.latitude)
     val latRad2 = toRadians(otherLocation.latitude)
     val dLat = toRadians(otherLocation.latitude - location.latitude)
@@ -32,7 +31,7 @@ fun Pair<Location, Location>.isWithinProximity(proximityInMeters: Double = 500.0
             sin(dLon / 2).pow(2.0)
 
     val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    val distanceInMeters = r * c
+    val distanceInMeters = Constants.EARTH_RADIUS_METERS * c
 
     return distanceInMeters <= proximityInMeters
 }
