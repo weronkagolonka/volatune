@@ -1,27 +1,40 @@
 [versions]
-avro-serializer = "8.0.0"
+docker-gradle = "9.4.0"
+hoplite = "2.9.0"
 kafka = "4.0.0"
 kotlin = "2.1.21"
+ktor = "3.2.2"
+logback = "1.4.14"
 test-containers = "1.21.2"
-geohash = "1.4.0"
 kotlinx-serialization = "1.8.1"
 avro4k = "2.3.0"
 kotest = "5.9.1"
 kotlin-coroutines = "1.10.2"
-
+uber-h3 = "4.1.1"
 
 [libraries]
 avro4k = { module = "com.github.avro-kotlin.avro4k:avro4k-core", version.ref = "avro4k" }
-avro-serializer = { module = "io.confluent:kafka-avro-serializer", version.ref = "avro-serializer" }
-geohash = { module = "ch.hsr:geohash", version.ref = "geohash" }
+hoplite-core = { module = "com.sksamuel.hoplite:hoplite-core", version.ref = "hoplite" }
+hoplite-hocon = { module = "com.sksamuel.hoplite:hoplite-hocon", version.ref = "hoplite" }
 kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka"}
 kotest-junit = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+ktor-dependency-injection = { module = "io.ktor:ktor-server-di-jvm", version.ref = "ktor"}
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-host-common = { module = "io.ktor:ktor-server-host-common", version.ref = "ktor" }
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "test-containers" }
 testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "test-containers" }
 testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "test-containers" }
+h3 = { module = "com.uber:h3", version.ref = "uber-h3" }
 
 [bundles]
 testcontainers = [
@@ -35,6 +48,14 @@ kotest = [
     "kotest-assertions"
 ]
 
+hoplite = [
+    "hoplite-core",
+    "hoplite-hocon"
+]
+
 [plugins]
+docker-gradle = { id = "com.bmuschko.docker-remote-api", version.ref = "docker-gradle" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

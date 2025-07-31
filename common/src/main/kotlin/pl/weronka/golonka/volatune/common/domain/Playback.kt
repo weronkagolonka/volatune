@@ -4,37 +4,37 @@ import com.github.avrokotlin.avro4k.Avro
 import kotlinx.serialization.Serializable
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serializer
-import pl.weronka.golonka.volatune.common.domain.Geohash
 import pl.weronkagolonka.volatune.domain.Song
 import pl.weronkagolonka.volatune.domain.User
 import java.time.Instant
+import java.util.UUID
 
 @Serializable
 data class Playback(
     val user: User,
     val song: Song,
     val timestamp: Long,
-    val location: Geohash,
+    val location: Location,
 ) {
     companion object {
         fun getTestInstance(): Playback =
             Playback(
                 user =
                     User(
-                        id = "1",
+                        id = UUID.randomUUID().toString(),
                         name = "test",
                         profileImageUrl = "test.jpg",
                     ),
                 song =
                     Song(
-                        id = "1",
+                        id = UUID.randomUUID().toString(),
                         title = "test",
                         artists = listOf("test"),
                         album = "test",
                         albumImageUrl = "test.jpg",
                     ),
                 timestamp = Instant.now().epochSecond,
-                location = Geohash.fromLatLng(1.0, 2.0),
+                location = Location(1.0, 2.0),
             )
     }
 }

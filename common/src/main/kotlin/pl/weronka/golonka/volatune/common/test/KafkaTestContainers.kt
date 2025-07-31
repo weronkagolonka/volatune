@@ -1,4 +1,5 @@
-import io.kotest.core.config.AbstractProjectConfig
+package pl.weronka.golonka.volatune.common.test
+
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
 import org.testcontainers.containers.wait.strategy.Wait
@@ -35,19 +36,5 @@ object TestContainers {
             .also {
                 it.start()
             }
-    }
-}
-
-object KafkaKotestProject : AbstractProjectConfig() {
-    override suspend fun beforeProject() {
-        TestContainers.kafka
-        println("Kafka started")
-        TestContainers.schemaRegistry
-        println("Schema registry started")
-    }
-
-    override suspend fun afterProject() {
-        TestContainers.schemaRegistry.stop()
-        TestContainers.kafka.stop()
     }
 }

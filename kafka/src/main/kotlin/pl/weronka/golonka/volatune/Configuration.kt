@@ -1,9 +1,5 @@
 package pl.weronka.golonka.volatune
 
-data class Configuration(
-    val kafka: KafkaConfiguration,
-)
-
 data class KafkaConfiguration(
     val bootstrapServers: List<String>,
     val schema: SchemaConfiguration,

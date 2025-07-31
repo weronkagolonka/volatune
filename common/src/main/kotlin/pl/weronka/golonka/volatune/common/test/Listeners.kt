@@ -1,3 +1,5 @@
+package pl.weronka.golonka.volatune.common.test
+
 import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.Spec
 import io.kotest.core.test.TestCase
