@@ -24,12 +24,14 @@ private suspend fun <T> WebSocketServerSession.getQueryParamValue(
     parseFn: (queryParamValue: String?) -> T?,
 ): T? =
     runCatching {
-        call.request.queryParameters[key]
+        val param = call.request.queryParameters[key]
+        parseFn(param)
     }.fold({ param ->
         if (param == null) {
             close(CloseReason(CloseReason.Codes.CANNOT_ACCEPT, "$key query parameter is required"))
+            return null
         }
-        return parseFn(param)
+        return param
     }, { error ->
         close(
             CloseReason(
