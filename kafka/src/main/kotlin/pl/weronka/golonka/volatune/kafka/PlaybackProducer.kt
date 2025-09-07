@@ -1,6 +1,7 @@
 package pl.weronka.golonka.volatune.kafka
 
 import com.uber.h3core.H3Core
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -11,7 +12,6 @@ import pl.weronka.golonka.volatune.common.domain.Playback
 import pl.weronka.golonka.volatune.common.domain.PlaybackKafkaSerializer
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class PlaybackProducer(
     private val config: KafkaConfiguration,
@@ -30,21 +30,28 @@ class PlaybackProducer(
             ),
         )
 
-    suspend fun send(playback: Playback) {
-        val record =
-            ProducerRecord(
-                config.topic,
-                playback.location.h3Index(h3).toString(),
-                playback,
-            )
+    suspend fun send(playback: Playback): RecordMetadata =
+        suspendCancellableCoroutine { continuation ->
+            val record =
+                ProducerRecord(
+                    config.topic,
+                    playback.location.h3Index(h3).toString(),
+                    playback,
+                )
 
-        suspendCoroutine<RecordMetadata> { continuation ->
-            producer.send(record) { metadata, exception ->
-                exception?.let { continuation::resumeWithException }
-                    ?: continuation.resume(metadata)
+            val future =
+                producer.send(record) { metadata, exception ->
+                    if (exception != null) {
+                        continuation.resumeWithException(exception)
+                    } else {
+                        continuation.resume(metadata)
+                    }
+                }
+
+            continuation.invokeOnCancellation {
+                future.cancel(true)
             }
         }
-    }
 
     fun close() = producer.close()
 }

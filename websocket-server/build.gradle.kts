@@ -22,6 +22,6 @@ dependencies {
 
     testImplementation(libs.h3)
     testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.mockk)
     testImplementation(libs.bundles.kotest)
-    testImplementation(libs.bundles.testcontainers)
 }

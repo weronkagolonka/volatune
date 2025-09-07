@@ -1,11 +1,14 @@
 package pl.weronka.golonka.volatune.kafka
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.yield
+import kotlinx.coroutines.launch
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.common.errors.WakeupException
 import org.apache.kafka.common.serialization.StringDeserializer
 import pl.weronka.golonka.volatune.KafkaConfiguration
 import pl.weronka.golonka.volatune.common.domain.Playback
@@ -30,33 +33,37 @@ class PlaybackConsumer(
             ),
         )
 
+    // Replay 0 - users see only those events that were collected after they connected to the socket.
+    private val _playbackEvents = MutableSharedFlow<Playback>(replay = 0)
+    val playbackEvents = _playbackEvents.asSharedFlow()
+
     // TODO consumer or API filters out the nearest events.
     //  When scaling, this should be handled by stream processing tools
     //  + derived topics based on regions
-    fun getPlaybackEvents(): Flow<Playback> =
-        callbackFlow {
-            /**
-             * webSocket("/playback-stream") {
-             *     playbackConsumer.playbackEventsFlow().collect { playback ->
-             *         sendSerialized(playback)  // uses kotlinx.serialization
-             *     }
-             * }
-             *
-             */
 
+    // TODO: polling duration is configurable
+    fun startPollingPlaybacks(scope: CoroutineScope) {
+        scope.launch(Dispatchers.IO) {
             consumer.subscribe(listOf(config.topic))
             try {
                 while (isActive) {
                     consumer.poll(Duration.ofMillis(5000)).forEach {
-                        trySend(it.value())
+                        _playbackEvents.emit(it.value())
                     }
-                    yield()
                 }
-            } catch (e: Throwable) {
-                close(e)
+            } catch (e: Exception) {
+                if (e is WakeupException) {
+                    println("Consumer shut down")
+                } else {
+                    e.printStackTrace()
+                }
             } finally {
                 consumer.close()
-                close()
             }
         }
+    }
+
+    fun stopPollingPlaybacks() {
+        consumer.wakeup()
+    }
 }
