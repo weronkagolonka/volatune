@@ -3,7 +3,6 @@ package pl.weronka.golonka.volatune.kafka
 import com.github.avrokotlin.avro4k.Avro
 import com.github.avrokotlin.avro4k.schema
 import com.uber.h3core.H3Core
-import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainOnly
 import kotlinx.coroutines.flow.take
@@ -11,10 +10,8 @@ import kotlinx.coroutines.launch
 import pl.weronka.golonka.volatune.KafkaConfiguration
 import pl.weronka.golonka.volatune.SchemaConfiguration
 import pl.weronka.golonka.volatune.common.domain.Playback
-import pl.weronka.golonka.volatune.common.test.KafkaCleanerListener
 import pl.weronka.golonka.volatune.common.test.SchemaRegistererListener
 import pl.weronka.golonka.volatune.common.test.TestContainers
-import kotlin.time.Duration.Companion.seconds
 
 class PlaybackProducerConsumerTest :
     DescribeSpec({
@@ -23,7 +20,6 @@ class PlaybackProducerConsumerTest :
         val h3 = H3Core.newInstance()
 
         listeners(
-            KafkaCleanerListener(TestContainers.kafka.bootstrapServers),
             SchemaRegistererListener(
                 "http://${TestContainers.schemaRegistry.host}:${TestContainers.schemaRegistry.firstMappedPort}",
                 kafkaTopic,
@@ -49,24 +45,27 @@ class PlaybackProducerConsumerTest :
 
         afterSpec {
             producer.close()
+            consumer.stopPollingPlaybacks()
         }
 
-        it("should correctly send nd consume a record") {
+        it("should correctly send and consume a record") {
             val consumedRecords = mutableListOf<Playback>()
+            consumer.starPollingPlaybacks(this)
+
             val job =
                 launch {
                     consumer
-                        .getPlaybackEvents()
+                        .playbackEvents
                         .take(1)
                         .collect { consumedRecords += it }
+                    println("finished")
                 }
 
             producer.send(playback)
+            job.join()
 
-            eventually(5.seconds) {
-                consumedRecords shouldContainOnly listOf(playback)
-            }
+            consumer.stopPollingPlaybacks()
 
-            job.cancel()
+            consumedRecords shouldContainOnly listOf(playback)
         }
     })
