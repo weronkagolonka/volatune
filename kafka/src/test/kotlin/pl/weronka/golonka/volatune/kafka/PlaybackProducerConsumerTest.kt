@@ -50,7 +50,7 @@ class PlaybackProducerConsumerTest :
 
         it("should correctly send and consume a record") {
             val consumedRecords = mutableListOf<Playback>()
-            consumer.starPollingPlaybacks(this)
+            consumer.startPollingPlaybacks(this)
 
             val job =
                 launch {

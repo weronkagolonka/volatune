@@ -10,6 +10,7 @@ import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.sendSerialized
 import io.ktor.server.websocket.webSocket
+import io.ktor.utils.io.CancellationException
 import kotlinx.serialization.json.Json
 import pl.weronka.golonka.volatune.common.domain.Location
 import pl.weronka.golonka.volatune.common.domain.isWithinProximity
@@ -22,10 +23,14 @@ fun main(args: Array<String>) {
         .main(args)
 }
 
+// TODO application starts up the consumer and closes it, endpoint only collects data
+//  perhaps consumer extends AutoCloseable? https://ktor.io/docs/server-dependency-injection.html?topic=rx#autocloseable-support
+//  or add cleanup fn
+//  or shutdown hook
 fun Application.module() {
     configureDependencies()
     configureSocket()
-    playbackEndpoint()
+    pollPlayback()
 }
 
 fun Application.configureDependencies() {
@@ -53,22 +58,28 @@ fun Application.configureSocket() {
     }
 }
 
-fun Application.playbackEndpoint() {
+fun Application.pollPlayback() {
+    val consumer: PlaybackConsumer by dependencies
+    val config: Configuration by dependencies
+
+    consumer.startPollingPlaybacks(this)
+
     routing {
         webSocket("/playback") {
-            val consumer: PlaybackConsumer by dependencies
-            val config: Configuration by dependencies
-
             val latitude = latitudeQueryParam() ?: return@webSocket
             val longitude = longitudeQueryParam() ?: return@webSocket
             val userLocation = Location(latitude, longitude)
 
-            consumer.getPlaybackEvents().collect { playback ->
-                (userLocation to playback.location).let { distance ->
-                    if (distance.isWithinProximity(config.proximityInMeters)) {
-                        sendSerialized(playback)
+            try {
+                consumer.playbackEvents.collect { playback ->
+                    (userLocation to playback.location).let { distance ->
+                        if (distance.isWithinProximity(config.proximityInMeters)) {
+                            sendSerialized(playback)
+                        }
                     }
                 }
+            } catch (e: CancellationException) {
+                e.printStackTrace()
             }
         }
     }

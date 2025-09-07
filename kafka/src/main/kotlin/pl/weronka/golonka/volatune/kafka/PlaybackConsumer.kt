@@ -2,13 +2,10 @@ package pl.weronka.golonka.volatune.kafka
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.WakeupException
@@ -45,7 +42,7 @@ class PlaybackConsumer(
     //  + derived topics based on regions
 
     // TODO: polling duration is configurable
-    fun starPollingPlaybacks(scope: CoroutineScope) {
+    fun startPollingPlaybacks(scope: CoroutineScope) {
         scope.launch(Dispatchers.IO) {
             consumer.subscribe(listOf(config.topic))
             try {
