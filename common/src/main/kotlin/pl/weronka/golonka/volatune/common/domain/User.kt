@@ -1,4 +1,4 @@
-package pl.weronkagolonka.volatune.domain
+package pl.weronka.golonka.volatune.common.domain
 
 import kotlinx.serialization.Serializable
 
@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class User(
     val id: String,
     val name: String? = null,
-    val profileImageUrl: String? = null,
+    val image: Image? = null,
 )

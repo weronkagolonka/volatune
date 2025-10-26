@@ -55,9 +55,20 @@ hoplite = [
     "hoplite-hocon"
 ]
 
+ktor = [
+    "ktor-server-core",
+    "ktor-dependency-injection",
+    "ktor-server-host-common",
+    "ktor-serialization-kotlinx-json",
+    "ktor-server-config-yaml",
+    "ktor-server-content-negotiation",
+    "ktor-server-netty",
+    "ktor-server-test-host",
+    "ktor-server-websockets"
+]
+
 [plugins]
 docker-gradle = { id = "com.bmuschko.docker-remote-api", version.ref = "docker-gradle" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
-kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

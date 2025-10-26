@@ -4,15 +4,13 @@ import com.github.avrokotlin.avro4k.Avro
 import kotlinx.serialization.Serializable
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serializer
-import pl.weronkagolonka.volatune.domain.Song
-import pl.weronkagolonka.volatune.domain.User
 import java.time.Instant
 import java.util.UUID
 
 @Serializable
 data class Playback(
     val user: User,
-    val song: Song,
+    val item: PlaybackItem,
     val timestamp: Long,
     val location: Location,
 ) {
@@ -23,15 +21,22 @@ data class Playback(
                     User(
                         id = UUID.randomUUID().toString(),
                         name = "test",
-                        profileImageUrl = "test.jpg",
+                        image = Image("test.jpg", 300, 300),
                     ),
-                song =
-                    Song(
-                        id = UUID.randomUUID().toString(),
+                item =
+                    PlaybackItem.Song(
                         title = "test",
                         artists = listOf("test"),
-                        album = "test",
-                        albumImageUrl = "test.jpg",
+                        album =
+                            Album(
+                                title = "test",
+                                coverImage =
+                                    Image(
+                                        url = "test",
+                                        height = 1,
+                                        width = 1,
+                                    ),
+                            ),
                     ),
                 timestamp = Instant.now().epochSecond,
                 location = Location(1.0, 2.0),
