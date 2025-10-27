@@ -1,11 +1,11 @@
-package pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.dto
+package pl.weronka.golonka.volatune.dto
 
 import kotlinx.serialization.Serializable
 import pl.weronka.golonka.volatune.common.domain.PlaybackItem
-import pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.dto.providers.SpotifyAlbum
-import pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.dto.providers.SpotifyArtist
-import pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.dto.providers.SpotifyImage
-import pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.dto.providers.SpotifyShow
+import pl.weronka.golonka.volatune.dto.metadata.SpotifyAlbum
+import pl.weronka.golonka.volatune.dto.metadata.SpotifyArtist
+import pl.weronka.golonka.volatune.dto.metadata.SpotifyImage
+import pl.weronka.golonka.volatune.dto.metadata.SpotifyShow
 
 @Serializable
 sealed class StreamingServicePlaybackItem {
@@ -23,6 +23,7 @@ sealed class StreamingServicePlaybackItem {
         val artists: List<SpotifyArtist>,
         val id: String,
         val name: String,
+        val timestamp: Int,
     ) : StreamingServicePlaybackItem() {
         override val type = "track"
 
@@ -31,6 +32,7 @@ sealed class StreamingServicePlaybackItem {
                 title = this.name,
                 artists = this.artists.map { it.name },
                 album = this.album.toAlbum(),
+                timestamp = this.timestamp.toLong(),
             )
     }
 
@@ -40,6 +42,7 @@ sealed class StreamingServicePlaybackItem {
         val images: List<SpotifyImage>,
         val name: String,
         val show: SpotifyShow,
+        val timestamp: Int,
     ) : StreamingServicePlaybackItem() {
         override val type: String = "episode"
 
@@ -47,7 +50,8 @@ sealed class StreamingServicePlaybackItem {
             PlaybackItem.Podcast(
                 title = this.name,
                 show = this.show.name,
-                coverImage = images.firstOrNull()?.toImage(),
+                coverImage = this.images.firstOrNull()?.toImage(),
+                timestamp = this.timestamp.toLong(),
             )
     }
 }

@@ -7,5 +7,5 @@ plugins {
 dependencies {
     implementation(project(":common"))
 
-    implementation(libs.bundles.ktor)
+    implementation(libs.bundles.ktor.rest.api)
 }

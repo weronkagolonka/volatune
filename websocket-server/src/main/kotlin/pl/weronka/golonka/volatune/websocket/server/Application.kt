@@ -34,7 +34,7 @@ fun Application.module() {
 }
 
 fun Application.configureDependencies() {
-    val config = Configuration.load()
+    val config = Configuration.load() // TODO replace with ktor's config
 
     install(DI) {
         dependencies {

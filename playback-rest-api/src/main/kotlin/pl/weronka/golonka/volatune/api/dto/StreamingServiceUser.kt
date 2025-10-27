@@ -1,9 +1,9 @@
-package pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.dto
+package pl.weronka.golonka.volatune.dto
 
 import kotlinx.serialization.Serializable
 import pl.weronka.golonka.volatune.common.domain.Image
 import pl.weronka.golonka.volatune.common.domain.User
-import pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.dto.providers.SpotifyImage
+import pl.weronka.golonka.volatune.dto.metadata.SpotifyImage
 
 @Serializable
 sealed class StreamingServiceUser {

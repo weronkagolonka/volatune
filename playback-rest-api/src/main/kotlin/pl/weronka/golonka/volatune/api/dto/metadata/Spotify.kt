@@ -1,16 +1,8 @@
-package pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.dto.providers
+package pl.weronka.golonka.volatune.dto.metadata
 
 import kotlinx.serialization.Serializable
+import pl.weronka.golonka.volatune.common.domain.Album
 import pl.weronka.golonka.volatune.common.domain.Image
-import pl.weronkagolonka.volatune.domain.Album
-
-@Serializable
-data class SpotifySongItem(
-    val album: SpotifyAlbum,
-    val artists: List<SpotifyArtist>,
-    val id: String,
-    val name: String,
-)
 
 @Serializable
 data class SpotifyAlbum(

@@ -1,4 +1,4 @@
-package pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.exceptions
+package pl.weronka.golonka.volatune.exceptions
 
 class GetCurrentUserException(
     val className: String,

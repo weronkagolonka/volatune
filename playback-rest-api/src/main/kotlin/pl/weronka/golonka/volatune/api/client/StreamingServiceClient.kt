@@ -1,4 +1,4 @@
-package pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.service
+package pl.weronka.golonka.volatune.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -9,13 +9,13 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
-import pl.weronka.golonka.volatune.StreamingServiceConfiguration
+import pl.weronka.golonka.volatune.api.StreamingServiceConfiguration
 import pl.weronka.golonka.volatune.common.domain.PlaybackItem
 import pl.weronka.golonka.volatune.common.domain.User
-import pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.dto.SpotifyUser
-import pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.dto.StreamingServicePlaybackItem
-import pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.exceptions.GetCurrentPlaybackException
-import pl.weronka.golonka.volatune.pl.weronka.golonka.volatune.exceptions.GetCurrentUserException
+import pl.weronka.golonka.volatune.dto.SpotifyUser
+import pl.weronka.golonka.volatune.dto.StreamingServicePlaybackItem
+import pl.weronka.golonka.volatune.exceptions.GetCurrentPlaybackException
+import pl.weronka.golonka.volatune.exceptions.GetCurrentUserException
 
 sealed class StreamingServiceClient(
     client: HttpClient,

@@ -29,6 +29,8 @@ ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.re
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
+ktor-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
@@ -65,6 +67,19 @@ ktor = [
     "ktor-server-netty",
     "ktor-server-test-host",
     "ktor-server-websockets"
+]
+
+ktor-rest-api = [
+    "ktor-server-core",
+    "ktor-dependency-injection",
+    "ktor-server-host-common",
+    "ktor-serialization-kotlinx-json",
+    "ktor-server-config-yaml",
+    "ktor-server-content-negotiation",
+    "ktor-server-netty",
+    "ktor-server-test-host",
+    "ktor-server-auth",
+    "ktor-content-negotiation"
 ]
 
 [plugins]
